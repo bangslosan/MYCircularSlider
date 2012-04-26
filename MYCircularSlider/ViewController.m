@@ -13,22 +13,34 @@
 @end
 
 @implementation ViewController
+@synthesize circularSlider = _circularSlider;
+@synthesize middleButton = _middleButton;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    [self.circularSlider addTarget:self action:@selector(updateProgress:) forControlEvents:UIControlEventValueChanged];
+    self.circularSlider.maximumValue = 60;
+    self.circularSlider.minimumValue = 1;
+    [self updateProgress:self.circularSlider];
 }
 
 - (void)viewDidUnload
 {
+    [self setCircularSlider:nil];
+    [self setMiddleButton:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+- (IBAction)updateProgress:(MYCircularSlider *)sender {
+   
+    self.circularSlider.value = sender.value;
 }
 
 @end

@@ -15,6 +15,8 @@
 		1EBC34F5154793DE0003EAC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC34F4154793DE0003EAC3 /* AppDelegate.m */; };
 		1EBC34F8154793DE0003EAC3 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1EBC34F6154793DE0003EAC3 /* MainStoryboard.storyboard */; };
 		1EBC34FB154793DE0003EAC3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC34FA154793DE0003EAC3 /* ViewController.m */; };
+		1EBC3503154794980003EAC3 /* MYCircularSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC3502154794980003EAC3 /* MYCircularSlider.m */; };
+		1EBC350A154900EC0003EAC3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EBC3509154900EC0003EAC3 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,15 +24,18 @@
 		1EBC34E4154793DD0003EAC3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1EBC34E6154793DD0003EAC3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1EBC34E8154793DD0003EAC3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		1EBC34EC154793DD0003EAC3 /* MYCircularSlider-Info.plist */ = {isa = PBXFileReference; path = "MYCircularSlider-Info.plist"; sourceTree = "<group>"; };
+		1EBC34EC154793DD0003EAC3 /* MYCircularSlider-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MYCircularSlider-Info.plist"; sourceTree = "<group>"; };
 		1EBC34EE154793DD0003EAC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1EBC34F0154793DD0003EAC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		1EBC34F2154793DD0003EAC3 /* MYCircularSlider-Prefix.pch */ = {isa = PBXFileReference; path = "MYCircularSlider-Prefix.pch"; sourceTree = "<group>"; };
-		1EBC34F3154793DD0003EAC3 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		1EBC34F2154793DD0003EAC3 /* MYCircularSlider-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MYCircularSlider-Prefix.pch"; sourceTree = "<group>"; };
+		1EBC34F3154793DD0003EAC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1EBC34F4154793DE0003EAC3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1EBC34F7154793DE0003EAC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
-		1EBC34F9154793DE0003EAC3 /* ViewController.h */ = {isa = PBXFileReference; path = ViewController.h; sourceTree = "<group>"; };
+		1EBC34F9154793DE0003EAC3 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		1EBC34FA154793DE0003EAC3 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		1EBC3501154794980003EAC3 /* MYCircularSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCircularSlider.h; sourceTree = "<group>"; };
+		1EBC3502154794980003EAC3 /* MYCircularSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCircularSlider.m; sourceTree = "<group>"; };
+		1EBC3509154900EC0003EAC3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EBC350A154900EC0003EAC3 /* QuartzCore.framework in Frameworks */,
 				1EBC34E5154793DD0003EAC3 /* UIKit.framework in Frameworks */,
 				1EBC34E7154793DD0003EAC3 /* Foundation.framework in Frameworks */,
 				1EBC34E9154793DD0003EAC3 /* CoreGraphics.framework in Frameworks */,
@@ -67,6 +73,7 @@
 		1EBC34E3154793DD0003EAC3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1EBC3509154900EC0003EAC3 /* QuartzCore.framework */,
 				1EBC34E4154793DD0003EAC3 /* UIKit.framework */,
 				1EBC34E6154793DD0003EAC3 /* Foundation.framework */,
 				1EBC34E8154793DD0003EAC3 /* CoreGraphics.framework */,
@@ -83,6 +90,8 @@
 				1EBC34F9154793DE0003EAC3 /* ViewController.h */,
 				1EBC34FA154793DE0003EAC3 /* ViewController.m */,
 				1EBC34EB154793DD0003EAC3 /* Supporting Files */,
+				1EBC3501154794980003EAC3 /* MYCircularSlider.h */,
+				1EBC3502154794980003EAC3 /* MYCircularSlider.m */,
 			);
 			path = MYCircularSlider;
 			sourceTree = "<group>";
@@ -163,6 +172,7 @@
 				1EBC34F1154793DD0003EAC3 /* main.m in Sources */,
 				1EBC34F5154793DE0003EAC3 /* AppDelegate.m in Sources */,
 				1EBC34FB154793DE0003EAC3 /* ViewController.m in Sources */,
+				1EBC3503154794980003EAC3 /* MYCircularSlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

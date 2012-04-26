@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
+#import "MYCircularSlider.h"
 
 @interface ViewController : UIViewController
+
+@property (weak, nonatomic) IBOutlet MYCircularSlider *circularSlider;
+@property (strong, nonatomic) IBOutlet UIButton *middleButton;
+
 
 @end
