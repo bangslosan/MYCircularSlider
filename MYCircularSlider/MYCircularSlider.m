@@ -306,7 +306,7 @@
     self.tappedPoint = [touch locationInView:self];
     
     
-    self.tappedPreviousPoint = self.tappedPoint;
+    //self.tappedPreviousPoint = self.tappedPoint;
     /*
     //get the value where the point started
     //Getting the radius of the circle
@@ -363,12 +363,13 @@
             //Getting the smallest angle between them(to draw the arc)
 			//CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
             
-            CGFloat angle = angleBetweenThreePoints(sliderCenter, self.tappedPoint, tapLocation);
-            self.signOfAngle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPreviousPoint);
+            CGFloat angle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPoint);
+            //self.signOfAngle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPreviousPoint);
             
-            NSLog(@"%f",signOfAngle);
-            //angle = fabsf(angle);
+            NSLog(@"%f",angle);
             
+            
+            /*
              //if angle is negative, then it is a clockwise angle
              //so real angle is the positive value of it
              if (angle < 0) 
@@ -381,13 +382,18 @@
              {
              angle = 2*M_PI - angle;
              }
+            */
             
-            self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
             //if I'm going in the other direction it should be -
-            if (self.signOfAngle>0) {
+            if (angle>0) 
+            {
+                self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
                 self.value = self.oldValue+self.newValue;
             }
-            else {
+            else 
+            {
+                angle = fabsf(angle);
+                self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
                 self.value = self.oldValue-self.newValue;
             }
                         
@@ -407,7 +413,9 @@
             self.value = self.oldValue+(self.newValue-self.valueAtTappedPoint);
             float angle = self.+(self.
              */
-            self.tappedPreviousPoint = tapLocation;
+            //self.tappedPreviousPoint = tapLocation;
+            self.tappedPoint = tapLocation;
+            self.oldValue = self.value;
 			break;
 		
         }
