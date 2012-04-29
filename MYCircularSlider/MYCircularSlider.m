@@ -31,8 +31,15 @@
              withRadius:(CGFloat)radius 
               inContext:(CGContextRef)context;
 
+@property(nonatomic) float oldValue;
 @property(nonatomic) float newValue;
 @property(nonatomic) float valueAtTappedPoint;
+@property(nonatomic) BOOL maxReached;
+@property(nonatomic) BOOL minReached;
+@property(nonatomic) CGPoint tappedPoint;
+@property(nonatomic) CGPoint tappedPreviousPoint;
+@property(nonatomic) float signOfAngle;
+
 @end
 
 
@@ -40,29 +47,38 @@
 @implementation MYCircularSlider
 
 #pragma mark - Synthesizers
+@synthesize oldValue;
 @synthesize newValue;
 @synthesize valueAtTappedPoint;
+@synthesize maxReached, minReached;
+@synthesize tappedPoint, tappedPreviousPoint;
+@synthesize signOfAngle;
 
 //Have a cut off at 55 and 5????
 @synthesize value = _value;
 - (void)setValue:(float)value
 {
-    /*
-    if (fabsf(_value-value)>5)
+    
+    /*if (fabsf(_value-value))
     {
         
     }
     else */if (value != _value) 
     {
         
-        if (value > self.maximumValue-5) 
+        if (value >= self.maximumValue-5) 
         {
             value = self.maximumValue-5;
+            //Animate view and cancel all touches
+            [self cancelTrackingWithEvent:nil];
+            
         }
         
         if (value < self.minimumValue+5) 
         {
             value = self.minimumValue+5;
+            //Animate view and cancel all touches
+            [self cancelTrackingWithEvent:nil];
         }
         _value = value;
         [self setNeedsDisplay];
@@ -280,13 +296,18 @@
 	return CGRectContainsPoint(thumbTouchRect, point);
 }
 
+
 /** @name Touch management methods */
 #pragma mark - Touch management methods
 
 -(BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     
-    CGPoint tapLocation = [touch locationInView:self];
+    self.oldValue = self.value;
+    self.tappedPoint = [touch locationInView:self];
     
+    
+    self.tappedPreviousPoint = self.tappedPoint;
+    /*
     //get the value where the point started
     //Getting the radius of the circle
     CGFloat radius = [self sliderRadius];
@@ -295,7 +316,11 @@
     //Start at the top of the circle
     CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
     //Getting the smallest angle between them(to draw the arc)
-    CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
+    //this angle should be between
+    CGFloat angleFromTrack = translateValueFromSourceIntervalToDestinationInterval(self.value, self.minimumValue, self.maximumValue, 0, 2*M_PI);
+    
+    
+    //CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
     
     //if angle is negative, then it is a clockwise angle
     //so real angle is the positive value of it
@@ -313,9 +338,9 @@
     //Whenever value is set.it redraws on the screen
     //and an action to the its target is sent
     self.valueAtTappedPoint = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-    NSLog(@"touch began");
-    NSLog(@"tapped value=%f",self.valueAtTappedPoint);
     return (self.ignoreTouchesExceptOnThumb ? [self isPointInThumb:[touch locationInView:self]] : YES);
+     */
+    return YES;
 }
 
 //WHEN I Calculate the angle
@@ -330,34 +355,59 @@
 		case UITouchPhaseMoved: 
         {
             //Getting the radius of the circle
-			CGFloat radius = [self sliderRadius];
+			//CGFloat radius = [self sliderRadius];
             //Getting the center of the circle
 			CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
             //Start at the top of the circle
-			CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
+			//CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
             //Getting the smallest angle between them(to draw the arc)
-			CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
-			
-            //if angle is negative, then it is a clockwise angle
-            //so real angle is the positive value of it
-			if (angle < 0) 
-            {
-				angle = -angle;
-			}
-            //if angle is positive, then it is a counter-clockwise angle
-            //so get the real angle. 360-x
-			else 
-            {
-				angle = 2*M_PI - angle;
-			}
+			//CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
+            
+            CGFloat angle = angleBetweenThreePoints(sliderCenter, self.tappedPoint, tapLocation);
+            self.signOfAngle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPreviousPoint);
+            
+            NSLog(@"%f",signOfAngle);
+            //angle = fabsf(angle);
+            
+             //if angle is negative, then it is a clockwise angle
+             //so real angle is the positive value of it
+             if (angle < 0) 
+             {
+             angle = -angle;
+             }
+             //if angle is positive, then it is a counter-clockwise angle
+             //so get the real angle. 360-x
+             else 
+             {
+             angle = 2*M_PI - angle;
+             }
+            
+            self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+            //if I'm going in the other direction it should be -
+            if (self.signOfAngle>0) {
+                self.value = self.oldValue+self.newValue;
+            }
+            else {
+                self.value = self.oldValue-self.newValue;
+            }
+                        
+            
 			//Get the value of the slider
             //Whenever value is set.it redraws on the screen
             //and an action to the its target is sent
             
-			self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-            NSLog(@"%f",self.newValue);
-            self.value = self.value+(self.newValue-self.valueAtTappedPoint);
-            NSLog(@"%f\n\n",self.value);
+          
+/*
+            
+            
+			//new value should be able to go above 360
+            self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+            
+            
+            self.value = self.oldValue+(self.newValue-self.valueAtTappedPoint);
+            float angle = self.+(self.
+             */
+            self.tappedPreviousPoint = tapLocation;
 			break;
 		
         }
@@ -374,7 +424,11 @@
 }
 
 //if value reaches less than 5 cancel tracking
-//-cancelTrackingWithEvent:
+//
+-(void) cancelTrackingWithEvent:(UIEvent *)event
+{
+    [super cancelTrackingWithEvent:event];
+}
 
 @end
 
@@ -406,6 +460,7 @@ CGFloat angleBetweenThreePoints(CGPoint centerPoint, CGPoint p1, CGPoint p2)
 	//Calculate the angle between the two vectors
     CGFloat angle = atan2f(v2.x*v1.y - v1.x*v2.y, v1.x*v2.x + v1.y*v2.y);
 	
+    
 	return angle;
 }
 
