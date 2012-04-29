@@ -30,6 +30,9 @@
                 atPoint:(CGPoint)center 
              withRadius:(CGFloat)radius 
               inContext:(CGContextRef)context;
+
+@property(nonatomic) float newValue;
+@property(nonatomic) float valueAtTappedPoint;
 @end
 
 
@@ -37,21 +40,26 @@
 @implementation MYCircularSlider
 
 #pragma mark - Synthesizers
+@synthesize newValue;
+@synthesize valueAtTappedPoint;
+
 //Have a cut off at 55 and 5????
 @synthesize value = _value;
 - (void)setValue:(float)value
 {
-    
+    /*
     if (fabsf(_value-value)>5)
     {
         
     }
-    else if (value != _value) 
+    else */if (value != _value) 
     {
+        
         if (value > self.maximumValue-5) 
         {
             value = self.maximumValue-5;
         }
+        
         if (value < self.minimumValue+5) 
         {
             value = self.minimumValue+5;
@@ -276,6 +284,37 @@
 #pragma mark - Touch management methods
 
 -(BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
+    
+    CGPoint tapLocation = [touch locationInView:self];
+    
+    //get the value where the point started
+    //Getting the radius of the circle
+    CGFloat radius = [self sliderRadius];
+    //Getting the center of the circle
+    CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+    //Start at the top of the circle
+    CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
+    //Getting the smallest angle between them(to draw the arc)
+    CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
+    
+    //if angle is negative, then it is a clockwise angle
+    //so real angle is the positive value of it
+    if (angle < 0) 
+    {
+        angle = -angle;
+    }
+    //if angle is positive, then it is a counter-clockwise angle
+    //so get the real angle. 360-x
+    else 
+    {
+        angle = 2*M_PI - angle;
+    }
+    //Get the value of the slider
+    //Whenever value is set.it redraws on the screen
+    //and an action to the its target is sent
+    self.valueAtTappedPoint = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+    NSLog(@"touch began");
+    NSLog(@"tapped value=%f",self.valueAtTappedPoint);
     return (self.ignoreTouchesExceptOnThumb ? [self isPointInThumb:[touch locationInView:self]] : YES);
 }
 
@@ -314,7 +353,11 @@
 			//Get the value of the slider
             //Whenever value is set.it redraws on the screen
             //and an action to the its target is sent
-			self.value = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+            
+			self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+            NSLog(@"%f",self.newValue);
+            self.value = self.value+(self.newValue-self.valueAtTappedPoint);
+            NSLog(@"%f\n\n",self.value);
 			break;
 		
         }
@@ -329,6 +372,9 @@
 {
     [super endTrackingWithTouch:touch withEvent:event];
 }
+
+//if value reaches less than 5 cancel tracking
+//-cancelTrackingWithEvent:
 
 @end
 
