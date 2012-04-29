@@ -17,6 +17,7 @@
 		1EBC34FB154793DE0003EAC3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC34FA154793DE0003EAC3 /* ViewController.m */; };
 		1EBC3503154794980003EAC3 /* MYCircularSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EBC3502154794980003EAC3 /* MYCircularSlider.m */; };
 		1EBC350A154900EC0003EAC3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EBC3509154900EC0003EAC3 /* QuartzCore.framework */; };
+		1EBC3510154BB45F0003EAC3 /* sms-received.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1EBC350F154BB45F0003EAC3 /* sms-received.wav */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		1EBC3501154794980003EAC3 /* MYCircularSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MYCircularSlider.h; sourceTree = "<group>"; };
 		1EBC3502154794980003EAC3 /* MYCircularSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MYCircularSlider.m; sourceTree = "<group>"; };
 		1EBC3509154900EC0003EAC3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		1EBC350F154BB45F0003EAC3 /* sms-received.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "sms-received.wav"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +94,7 @@
 				1EBC34EB154793DD0003EAC3 /* Supporting Files */,
 				1EBC3501154794980003EAC3 /* MYCircularSlider.h */,
 				1EBC3502154794980003EAC3 /* MYCircularSlider.m */,
+				1EBC350F154BB45F0003EAC3 /* sms-received.wav */,
 			);
 			path = MYCircularSlider;
 			sourceTree = "<group>";
@@ -159,6 +162,7 @@
 			files = (
 				1EBC34EF154793DD0003EAC3 /* InfoPlist.strings in Resources */,
 				1EBC34F8154793DE0003EAC3 /* MainStoryboard.storyboard in Resources */,
+				1EBC3510154BB45F0003EAC3 /* sms-received.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,10 +250,12 @@
 		1EBC34FF154793DE0003EAC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MYCircularSlider/MYCircularSlider-Prefix.pch";
 				INFOPLIST_FILE = "MYCircularSlider/MYCircularSlider-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -257,10 +263,12 @@
 		1EBC3500154793DE0003EAC3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MYCircularSlider/MYCircularSlider-Prefix.pch";
 				INFOPLIST_FILE = "MYCircularSlider/MYCircularSlider-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

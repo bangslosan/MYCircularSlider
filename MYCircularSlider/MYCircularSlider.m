@@ -58,6 +58,12 @@
         }
         _value = value;
         [self setNeedsDisplay];
+        
+        //For target action
+        //whenever value is changed
+        //this controller sends this action
+        //to whoever the target is
+        
         [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
 }
@@ -273,52 +279,86 @@
     return (self.ignoreTouchesExceptOnThumb ? [self isPointInThumb:[touch locationInView:self]] : YES);
 }
 
-- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
+//WHEN I Calculate the angle
+//it shouldn't be between the point where I touched..tap location
+//it should take into account my original slider value
+//and just add
+- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event 
+{
     CGPoint tapLocation = [touch locationInView:self];
-	switch (touch.phase) {
-		case UITouchPhaseMoved: {
+	switch (touch.phase) 
+    {
+		case UITouchPhaseMoved: 
+        {
+            //Getting the radius of the circle
 			CGFloat radius = [self sliderRadius];
+            //Getting the center of the circle
 			CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+            //Start at the top of the circle
 			CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
+            //Getting the smallest angle between them(to draw the arc)
 			CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
 			
-			if (angle < 0) {
+            //if angle is negative, then it is a clockwise angle
+            //so real angle is the positive value of it
+			if (angle < 0) 
+            {
 				angle = -angle;
 			}
-			else {
+            //if angle is positive, then it is a counter-clockwise angle
+            //so get the real angle. 360-x
+			else 
+            {
 				angle = 2*M_PI - angle;
 			}
-			
+			//Get the value of the slider
+            //Whenever value is set.it redraws on the screen
+            //and an action to the its target is sent
 			self.value = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
 			break;
-		}
+		
+        }
+            
 		default:
 			break;
 	}
     return [super beginTrackingWithTouch:touch withEvent:event];
 }
 
-
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    [super endTrackingWithTouch:touch withEvent:event];
+}
 
 @end
 
 #pragma mark - Utility Functions
-float translateValueFromSourceIntervalToDestinationInterval(float sourceValue, float sourceIntervalMinimum, float sourceIntervalMaximum, float destinationIntervalMinimum, float destinationIntervalMaximum) {
-	float a, b, destinationValue;
+float translateValueFromSourceIntervalToDestinationInterval(float sourceValue, 
+                                                            float sourceIntervalMinimum, 
+                                                            float sourceIntervalMaximum, 
+                                                            float destinationIntervalMinimum,
+                                                            float destinationIntervalMaximum) 
+{
+	float m, b, destinationValue;
+	//m is the slope(y2-y1/x2-x1) 
+	m = (destinationIntervalMaximum - destinationIntervalMinimum) / (sourceIntervalMaximum - sourceIntervalMinimum);
+    //b is the y-intercept
+	b = destinationIntervalMaximum - m*sourceIntervalMaximum;
 	
-	a = (destinationIntervalMaximum - destinationIntervalMinimum) / (sourceIntervalMaximum - sourceIntervalMinimum);
-	b = destinationIntervalMaximum - a*sourceIntervalMaximum;
-	
-	destinationValue = a*sourceValue + b;
+    //
+	destinationValue = m*sourceValue + b;
 	
 	return destinationValue;
 }
 
-CGFloat angleBetweenThreePoints(CGPoint centerPoint, CGPoint p1, CGPoint p2) {
-	CGPoint v1 = CGPointMake(p1.x - centerPoint.x, p1.y - centerPoint.y);
+CGFloat angleBetweenThreePoints(CGPoint centerPoint, CGPoint p1, CGPoint p2) 
+{
+    //Get the two vectors
+    CGPoint v1 = CGPointMake(p1.x - centerPoint.x, p1.y - centerPoint.y);
 	CGPoint v2 = CGPointMake(p2.x - centerPoint.x, p2.y - centerPoint.y);
 	
-	CGFloat angle = atan2f(v2.x*v1.y - v1.x*v2.y, v1.x*v2.x + v1.y*v2.y);
+	//Calculate the angle between the two vectors
+    CGFloat angle = atan2f(v2.x*v1.y - v1.x*v2.y, v1.x*v2.x + v1.y*v2.y);
 	
 	return angle;
 }

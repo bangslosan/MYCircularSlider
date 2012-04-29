@@ -37,10 +37,12 @@
  * @return	The value in the destination interval
  *
  * This function uses the linear function method, a.k.a. resolves the y=ax+b equation where y is a destination value and x a source value
- * Formulas :	a = (dMax - dMin) / (sMax - sMin)
- *				b = dMax - a*sMax = dMin - a*sMin
  */
-float translateValueFromSourceIntervalToDestinationInterval(float sourceValue, float sourceIntervalMinimum, float sourceIntervalMaximum, float destinationIntervalMinimum, float destinationIntervalMaximum);
+float translateValueFromSourceIntervalToDestinationInterval(float sourceValue, 
+                                                            float sourceIntervalMinimum, 
+                                                            float sourceIntervalMaximum, 
+                                                            float destinationIntervalMinimum, 
+                                                            float destinationIntervalMaximum);
 /**
  * Returns the smallest angle between three points, one of them clearly indicated as the "junction point" or "center point".
  * @param centerPoint	The "center point" or "junction point"
