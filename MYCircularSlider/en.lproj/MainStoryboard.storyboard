@@ -23,9 +23,10 @@
                                         <rect key="frame" x="104" y="130" width="112" height="59"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="boldSystem" size="button"/>
+                                        <size key="titleShadowOffset" width="1" height="1"/>
                                         <state key="normal" title="Paused">
-                                            <color key="titleColor" red="0.19607843137254902" green="0.30980392156862746" blue="0.52156862745098043" alpha="1" colorSpace="calibratedRGB"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <color key="titleShadowColor" red="0.80000000000000004" green="0.80000000000000004" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         </state>
                                         <state key="highlighted">
                                             <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -55,20 +56,6 @@
                                     <action selector="reset:" destination="2" eventType="touchUpInside" id="1uH-kH-s4Z"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Total Time Elapsed:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="PyO-wV-xf3">
-                                <rect key="frame" x="20" y="398" width="152" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" id="L4N-cI-fkK">
-                                <rect key="frame" x="180" y="398" width="42" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="OEa-B8-lI1">
                                 <rect key="frame" x="20" y="13" width="72" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -104,32 +91,13 @@
                     </view>
                     <connections>
                         <outlet property="circularSlider" destination="24V-C7-8ZX" id="I7X-ii-NSe"/>
-                        <outlet property="middleButton" destination="ZTw-P9-5DF" id="68n-yl-qqv"/>
-                        <outlet property="temporaryLabel" destination="L4N-cI-fkK" id="OyI-Uz-37D"/>
+                        <outlet property="innerButton" destination="ZTw-P9-5DF" id="TRc-fF-NGe"/>
                     </connections>
                 </viewController>
             </objects>
             <point key="canvasLocation" x="349" y="217"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="MYCircularSlider" superclassName="UIControl">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/MYCircularSlider.h"/>
-        </class>
-        <class className="ViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/ViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="playOrPause:"/>
-                <relationship kind="action" name="reset:"/>
-                <relationship kind="action" name="sliderValueChanged:" candidateClass="MYCircularSlider"/>
-                <relationship kind="action" name="turnBreakModeOn:"/>
-                <relationship kind="action" name="turnWorkModeOn:"/>
-                <relationship kind="outlet" name="circularSlider" candidateClass="MYCircularSlider"/>
-                <relationship kind="outlet" name="middleButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="temporaryLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

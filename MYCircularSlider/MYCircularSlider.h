@@ -19,11 +19,11 @@
 //Colors
 @property(nonatomic) UIColor *filledColor;
 @property(nonatomic) UIColor *unfilledColor;
-@property(nonatomic) UIColor *thumbTintColor;
-@property(nonatomic, strong) UIImage *thumbImage;
 
-@property (readwrite) BOOL ignoreTouchesExceptOnThumb;
+@property(nonatomic) BOOL isFilledModeOn;
+@property(nonatomic) float elapsedTime;
 
+@property(nonatomic) float adjustedValue;
 @end
 
 #pragma mark - Utility Functions

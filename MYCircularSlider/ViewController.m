@@ -10,6 +10,7 @@
 
 @interface ViewController ()
 - (void) updateTimer;
+- (void) updateInnerButton;
 - (IBAction)playOrPause:(id)sender;
 - (IBAction)sliderValueChanged:(MYCircularSlider *)sender;
 - (void) playAfterReset;
@@ -27,7 +28,7 @@
 @implementation ViewController
 @synthesize temporaryLabel = _temporaryLabel;
 @synthesize circularSlider = _circularSlider;
-@synthesize middleButton = _middleButton;
+@synthesize innerButton = _innerButton;
 @synthesize startDate = _startTime;
 @synthesize stopDate = _stopTime;
 @synthesize timeLeft = _timeLeft;
@@ -38,6 +39,39 @@
 @synthesize firstPlay = _firstPlay;
 @synthesize totalTime = _totalTime;
 
+
+- (void) setIsWorkModeOn:(BOOL)isWorkModeOn
+{
+    if (_isWorkModeOn != isWorkModeOn) {
+        _isWorkModeOn = isWorkModeOn;
+        self.circularSlider.isFilledModeOn = isWorkModeOn;
+    }
+}
+
+
+- (void) setTimeElapsed:(NSTimeInterval)timeElapsed
+{
+    //The value of the elapsed time can never be more than the value
+    //of the total time
+    if (timeElapsed >= self.totalTime) 
+    {
+        timeElapsed = self.totalTime;
+        
+    }
+    
+    _timeElapsed = timeElapsed;
+    self.circularSlider.elapsedTime = timeElapsed;
+    
+    NSLog(@"Time Elapsed:%f",_timeElapsed);
+
+}
+
+- (void) setTotalTime:(NSTimeInterval)totalTime
+{
+    _totalTime = round(totalTime);
+    [self setTimeElapsed:self.timeElapsed];
+    [self updateInnerButton];
+}
 
 - (void)viewDidLoad
 {
@@ -52,9 +86,8 @@
     //              forControlEvents:UIControlEventValueChanged];
     self.circularSlider.maximumValue = 60;
     self.circularSlider.minimumValue = 0;
-    self.circularSlider.value = 4;
-    self.circularSlider.value = 8;
-    self.circularSlider.value = 12;
+    self.circularSlider.value = 40;
+    
     self.firstPlay = YES;
     self.isWorkModeOn = YES;
     //self.timeElapsed = 0;
@@ -64,7 +97,7 @@
 - (void)viewDidUnload
 {
     [self setCircularSlider:nil];
-    [self setMiddleButton:nil];
+    [self setInnerButton:nil];
     [self setTemporaryLabel:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
@@ -96,10 +129,10 @@
         //Get int values of circular slider
         //
         
-        self.totalTime = self.circularSlider.value*60;
+        self.totalTime = round(self.circularSlider.value)*60;
     }
     else {
-        self.totalTime = (self.circularSlider.maximumValue-self.circularSlider.value)*60;
+        self.totalTime = round(self.circularSlider.maximumValue-self.circularSlider.value)*60;
     }
 }
 
@@ -168,7 +201,8 @@
     
     if (self.isPaused) 
     {
-        self.middleButton.titleLabel.text = @"Paused";
+        [self updateInnerButton];
+        self.innerButton.titleLabel.text = @"0:00";
         //stop the timer
         [self.timer invalidate];
         self.timer = nil;
@@ -191,9 +225,7 @@
 - (void)updateTimer
 {
     self.timeElapsed = self.timeElapsed + 1.0;
-    self.temporaryLabel.text = [NSString stringWithFormat:@"%f",self.timeElapsed];
-    self.timeLeft = self.totalTime - self.timeElapsed;
-    //self.timeLeft = [self.stopTime timeIntervalSinceDate:[NSDate date]];
+
     //Every time timer gets done ..PAUSE
     if (self.timeLeft <= 0) 
     {
@@ -211,12 +243,26 @@
     }
     else 
     {
-        int minutesLeft = floor(self.timeLeft/60);
-        int secondsLeft = round(self.timeLeft - minutesLeft * 60);
-        
-        self.middleButton.titleLabel.text = [NSString stringWithFormat:@"%i:%02i", minutesLeft, secondsLeft];
+         [self updateInnerButton];
     }
+   
     
+    
+}
+
+- (void)updateInnerButton
+{
+    //Changing the algorithm to see if the 60 sec bug goes away
+    /*
+     int minutesLeft = floor(self.timeLeft/60);
+     int secondsLeft = round(self.timeLeft - minutesLeft * 60);
+     */
+    self.timeLeft = self.totalTime - self.timeElapsed;
+    int timeLeft = (int)self.timeLeft;
+    int minutesLeft = (timeLeft/60) % 60;
+    int secondsLeft = timeLeft % 60;
+    self.innerButton.titleLabel.text = [NSString stringWithFormat:@"%i:%02i", minutesLeft, secondsLeft];
+    //[self.innerButton setNeedsDisplay];
 }
 
 - (void)fireLocalNotification:(NSTimeInterval)timeLeft

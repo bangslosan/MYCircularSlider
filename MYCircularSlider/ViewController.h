@@ -12,19 +12,19 @@
 
 @interface ViewController : UIViewController
 
-@property (weak, nonatomic) IBOutlet MYCircularSlider *circularSlider;
-@property (strong, nonatomic) IBOutlet UIButton *middleButton;
+@property (weak, nonatomic)IBOutlet MYCircularSlider *circularSlider;
+@property (strong, nonatomic)IBOutlet UIButton *innerButton;
 
 @property NSDate *startDate;
 @property NSDate *stopDate;
 
-@property NSTimeInterval totalTime;
-@property NSTimeInterval timeLeft;
-@property NSTimeInterval timeElapsed;
+@property (nonatomic)NSTimeInterval totalTime;
+@property (nonatomic)NSTimeInterval timeLeft;
+@property (nonatomic)NSTimeInterval timeElapsed;
 
 @property NSTimer *timer;
 
-@property BOOL isWorkModeOn;
+@property (nonatomic) BOOL isWorkModeOn;
 @property BOOL isPaused;
 @property BOOL firstPlay;
 
@@ -33,7 +33,3 @@
 
 @end
 
-
-/////////////
-//Put a countdown timer based on the value of the circular
-//slider and show it in the button

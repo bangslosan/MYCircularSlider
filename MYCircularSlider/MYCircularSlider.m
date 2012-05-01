@@ -11,34 +11,26 @@
 #pragma mark - Private methods
 @interface MYCircularSlider()
 
-//Do I need this????
-@property(nonatomic) CGPoint thumbCenterPoint;
-
 //Init and Setup method
 - (void)setup;
 
-//Thumb managment method????
-- (BOOL)isPointInThumb:(CGPoint)point;
-
 //Drawing methods
 - (CGFloat)sliderRadius;
-
-- (void) drawThumbAtPoint:(CGPoint)sliderButtonCenterPoint 
-                inContext:(CGContextRef)context; //do I need this?
 
 - (CGPoint)drawPieTrack:(float)track 
                 atPoint:(CGPoint)center 
              withRadius:(CGFloat)radius 
               inContext:(CGContextRef)context;
 
+- (CGPoint)drawCircularTrack:(float)track
+                     atPoint:(CGPoint)point 
+                  withRadius:(CGFloat)radius
+                   inContext:(CGContextRef)context;
+
 @property(nonatomic) float oldValue;
-@property(nonatomic) float newValue;
-@property(nonatomic) float valueAtTappedPoint;
-@property(nonatomic) BOOL maxReached;
-@property(nonatomic) BOOL minReached;
-@property(nonatomic) CGPoint tappedPoint;
-@property(nonatomic) CGPoint tappedPreviousPoint;
-@property(nonatomic) float signOfAngle;
+@property(nonatomic) CGPoint previousTappedPoint;
+
+@property(nonatomic) double angle;
 
 @end
 
@@ -47,38 +39,33 @@
 @implementation MYCircularSlider
 
 #pragma mark - Synthesizers
-@synthesize oldValue;
-@synthesize newValue;
-@synthesize valueAtTappedPoint;
-@synthesize maxReached, minReached;
-@synthesize tappedPoint, tappedPreviousPoint;
-@synthesize signOfAngle;
+@synthesize oldValue = _oldValue,
+            previousTappedPoint = _previousTappedPoint,
+            elapsedTime = _elapsedTime,
+            isFilledModeOn = _isFilledModeOn,
+            adjustedValue = _adjustedValue;
 
+@synthesize angle = _angle;
+
+- (void)setElapsedTime:(float)elapsedTime
+{
+    _elapsedTime = elapsedTime;
+    [self setNeedsDisplay];
+}
 //Have a cut off at 55 and 5????
 @synthesize value = _value;
 - (void)setValue:(float)value
 {
-    
-    /*if (fabsf(_value-value))
+    if (value != _value) 
     {
-        
-    }
-    else */if (value != _value) 
-    {
-        
-        if (value >= self.maximumValue-5) 
+        if (value >= self.maximumValue) 
         {
-            value = self.maximumValue-5;
-            //Animate view and cancel all touches
-            [self cancelTrackingWithEvent:nil];
-            
+            value = self.maximumValue;            
         }
         
-        if (value < self.minimumValue+5) 
+        if (value < self.minimumValue) 
         {
-            value = self.minimumValue+5;
-            //Animate view and cancel all touches
-            [self cancelTrackingWithEvent:nil];
+            value = self.minimumValue;
         }
         _value = value;
         [self setNeedsDisplay];
@@ -87,7 +74,6 @@
         //whenever value is changed
         //this controller sends this action
         //to whoever the target is
-        
         [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
 }
@@ -146,30 +132,6 @@
 	}
 }
 
-@synthesize thumbTintColor = _thumbTintColor;
-- (void)setThumbTintColor:(UIColor *)thumbTintColor 
-{
-	if (![thumbTintColor isEqual:_thumbTintColor]) 
-    {
-		_thumbTintColor = thumbTintColor;
-		[self setNeedsDisplay];
-	}
-}
-
-@synthesize thumbImage = _thumbImage;
-- (void)setThumbImage:(UIImage *)thumbImage 
-{
-	if (![thumbImage isEqual:_thumbImage]) 
-    {
-		_thumbImage = thumbImage;
-		[self setNeedsDisplay];
-	}
-}
-
-@synthesize ignoreTouchesExceptOnThumb = _ignoreTouchesExceptOnThumb;
-@synthesize thumbCenterPoint = _thumbCenterPoint;
-
-
 
 #pragma mark - Init and Setup Methods
 - (id)initWithFrame:(CGRect)frame
@@ -177,7 +139,6 @@
     self = [super initWithFrame:frame];
     if (self) 
     {
-        // Initialization code
         [self setup];
     }
     return self;
@@ -193,53 +154,65 @@
 	self.maximumValue = 60.0;
 	self.filledColor = [UIColor colorWithRed:129/255.0 green:195/255.0 blue:29/255.0 alpha:1];
 	self.unfilledColor = [UIColor colorWithRed:62/255.0 green:173/255.0 blue:219/255.0 alpha:1];
-	self.thumbTintColor = [UIColor clearColor];
-	self.thumbCenterPoint = CGPointZero;
-    //self.thumbImage??
+    
+    self.isFilledModeOn = YES;
+    self.elapsedTime = 0.0;
+    
 }
 
 #pragma mark - Drawing methods
-#define kThumbRadius 12.0
+#define kExtraSpaceRadius 12
+#define kLineWidth 6
 
 - (void)drawRect:(CGRect)rect
 {
-    // Drawing code
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     CGPoint middlePoint;
     middlePoint.x = self.bounds.origin.x + self.bounds.size.width/2;
     middlePoint.y = self.bounds.origin.y + self.bounds.size.height/2;
     
-    //CGContextSetLineWidth(context, kLineWidth);
     CGFloat radius = [self sliderRadius];
     
+    //draw unfilled pie chart
     [self.unfilledColor setFill];
     [self drawPieTrack:self.maximumValue 
                atPoint:middlePoint
             withRadius:radius 
              inContext:context];
-    /*
-    [self.unfilledColor setStroke];
-    [self drawCircularTrack:self.maximumValue 
-                    atPoint:middlePoint 
-                 withRadius:radius 
-                  inContext:context];
-     */
+    
+    //draw part which is filled
     [self.filledColor setFill];
-    self.thumbCenterPoint = [self drawPieTrack:self.value 
-                                       atPoint:middlePoint 
-                                    withRadius:radius 
-                                     inContext:context];
+    [self drawPieTrack:self.value 
+               atPoint:middlePoint 
+            withRadius:radius 
+             inContext:context];
     
-    [self drawThumbAtPoint:self.thumbCenterPoint inContext:context];
-    
+    //draw elapsed time
+    CGContextSetLineWidth(context, kLineWidth);
+    if (self.isFilledModeOn) 
+    {
+        [self.filledColor setStroke];
+        [self drawCircularTrack:self.elapsedTime 
+                        atPoint:middlePoint 
+                     withRadius:radius+(kExtraSpaceRadius/2)
+                      inContext:context];
+    }
+    else 
+    {
+        [self.unfilledColor setStroke];
+        [self drawCircularTrack:self.elapsedTime 
+                        atPoint:middlePoint 
+                     withRadius:radius+(kExtraSpaceRadius/2)
+                      inContext:context];
+    }
     
 }
 
 - (CGFloat)sliderRadius
 {
     CGFloat radius = MIN(self.bounds.size.width/2, self.bounds.size.height/2);
-    radius = radius - kThumbRadius;
+    radius = radius - kExtraSpaceRadius;
     return radius;
 }
 
@@ -248,11 +221,13 @@
              withRadius:(CGFloat)radius 
               inContext:(CGContextRef)context
 {
+    
     UIGraphicsPushContext(context);
     
     float angleFromTrack = translateValueFromSourceIntervalToDestinationInterval(track, self.minimumValue, self.maximumValue, 0, 2*M_PI);
     
     CGFloat startAngle = -M_PI_2;   //-90
+    
     CGFloat endAngle = startAngle + angleFromTrack;
     CGContextMoveToPoint(context, center.x, center.y);
 	CGContextAddArc(context, center.x, center.y, radius, startAngle, endAngle, NO);
@@ -261,39 +236,56 @@
 	
 	CGContextClosePath(context);
 	CGContextFillPath(context);
+    
+    
+    
 	UIGraphicsPopContext();
+    
 	
 	return arcEndPoint;
 }
 
- - (void)drawThumbAtPoint:(CGPoint)sliderButtonCenterPoint 
- inContext:(CGContextRef)context
- {
-     //get slider button center point first
-     if (self.thumbImage) 
-     {
-         [self.thumbImage drawAtPoint:(CGPoint){
-             .x = sliderButtonCenterPoint.x - (self.thumbImage.size.width/2), 
-             .y = sliderButtonCenterPoint.y - (self.thumbImage.size.height/2)
-            }
-          ];
+- (CGPoint)drawCircularTrack:(float)elapsedTime 
+                     atPoint:(CGPoint)center 
+                  withRadius:(CGFloat)biggerRadius 
+                   inContext:(CGContextRef)context 
+{
+	
+    UIGraphicsPushContext(context);
+	
+    CGContextBeginPath(context);
+	
+    //multiplied by 60 because the values are in seconds
+    //also has to move every second
+	float angleFromTrack = translateValueFromSourceIntervalToDestinationInterval(elapsedTime, self.minimumValue*60, self.maximumValue*60, 0, 2*M_PI);
+    
+	
+    CGFloat startAngle;
+    CGFloat endAngle;
+    if (self.isFilledModeOn) 
+    {
+        startAngle = -M_PI_2;   //-90
+        endAngle = startAngle + angleFromTrack;
+    }
+    else 
+    {
+        //start angle at start of break mode
+        
+        startAngle = translateValueFromSourceIntervalToDestinationInterval(self.value, self.minimumValue, self.maximumValue, 0, 2*M_PI);
+        startAngle = (startAngle-M_PI_2);
          
-         }
- }
+        endAngle = startAngle + angleFromTrack;
+    }
 
-
-
-
-//
-//
-//   NEXT JOB
-// Instead of the thumb..make the line controller
-
-/** @name Thumb management methods */
-#pragma mark - Thumb management methods
-- (BOOL)isPointInThumb:(CGPoint)point {
-	CGRect thumbTouchRect = CGRectMake(self.thumbCenterPoint.x - kThumbRadius, self.thumbCenterPoint.y - kThumbRadius, kThumbRadius*2, kThumbRadius*2);
-	return CGRectContainsPoint(thumbTouchRect, point);
+    //endAngle = startAngle + angleFromTrack;
+	CGContextAddArc(context, center.x, center.y, biggerRadius, startAngle, endAngle, NO);
+	
+	CGPoint arcEndPoint = CGContextGetPathCurrentPoint(context);
+	
+	CGContextStrokePath(context);
+	UIGraphicsPopContext();
+	
+	return arcEndPoint;
 }
 
 
@@ -302,51 +294,13 @@
 
 -(BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event {
     
+    //First time value save
     self.oldValue = self.value;
-    self.tappedPoint = [touch locationInView:self];
-    
-    
-    //self.tappedPreviousPoint = self.tappedPoint;
-    /*
-    //get the value where the point started
-    //Getting the radius of the circle
-    CGFloat radius = [self sliderRadius];
-    //Getting the center of the circle
-    CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
-    //Start at the top of the circle
-    CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
-    //Getting the smallest angle between them(to draw the arc)
-    //this angle should be between
-    CGFloat angleFromTrack = translateValueFromSourceIntervalToDestinationInterval(self.value, self.minimumValue, self.maximumValue, 0, 2*M_PI);
-    
-    
-    //CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
-    
-    //if angle is negative, then it is a clockwise angle
-    //so real angle is the positive value of it
-    if (angle < 0) 
-    {
-        angle = -angle;
-    }
-    //if angle is positive, then it is a counter-clockwise angle
-    //so get the real angle. 360-x
-    else 
-    {
-        angle = 2*M_PI - angle;
-    }
-    //Get the value of the slider
-    //Whenever value is set.it redraws on the screen
-    //and an action to the its target is sent
-    self.valueAtTappedPoint = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-    return (self.ignoreTouchesExceptOnThumb ? [self isPointInThumb:[touch locationInView:self]] : YES);
-     */
+    self.previousTappedPoint = [touch locationInView:self];
+
     return YES;
 }
 
-//WHEN I Calculate the angle
-//it shouldn't be between the point where I touched..tap location
-//it should take into account my original slider value
-//and just add
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event 
 {
     CGPoint tapLocation = [touch locationInView:self];
@@ -354,70 +308,35 @@
     {
 		case UITouchPhaseMoved: 
         {
-            //Getting the radius of the circle
-			//CGFloat radius = [self sliderRadius];
             //Getting the center of the circle
 			CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
-            //Start at the top of the circle
-			//CGPoint sliderStartPoint = CGPointMake(sliderCenter.x, sliderCenter.y - radius);
-            //Getting the smallest angle between them(to draw the arc)
-			//CGFloat angle = angleBetweenThreePoints(sliderCenter, sliderStartPoint, tapLocation);
             
-            CGFloat angle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPoint);
-            //self.signOfAngle = angleBetweenThreePoints(sliderCenter, tapLocation, self.tappedPreviousPoint);
+            CGFloat angle = angleBetweenThreePoints(sliderCenter, tapLocation, self.previousTappedPoint);
+            float newValue;
+     
+            //for endtracking adjustment save angle
+            self.angle = angle;
             
-            NSLog(@"%f",angle);
-            
-            
-            /*
-             //if angle is negative, then it is a clockwise angle
-             //so real angle is the positive value of it
-             if (angle < 0) 
-             {
-             angle = -angle;
-             }
-             //if angle is positive, then it is a counter-clockwise angle
-             //so get the real angle. 360-x
-             else 
-             {
-             angle = 2*M_PI - angle;
-             }
-            */
-            
-            //if I'm going in the other direction it should be -
+            //Finding direction
             if (angle>0) 
             {
-                self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-                self.value = self.oldValue+self.newValue;
+                newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+                self.value = self.oldValue+newValue;
             }
             else 
             {
                 angle = fabsf(angle);
-                self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-                self.value = self.oldValue-self.newValue;
+                newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
+                self.value = self.oldValue-newValue;
             }
-                        
-            
-			//Get the value of the slider
-            //Whenever value is set.it redraws on the screen
-            //and an action to the its target is sent
-            
-          
-/*
             
             
-			//new value should be able to go above 360
-            self.newValue = translateValueFromSourceIntervalToDestinationInterval(angle, 0, 2*M_PI, self.minimumValue, self.maximumValue);
-            
-            
-            self.value = self.oldValue+(self.newValue-self.valueAtTappedPoint);
-            float angle = self.+(self.
-             */
-            //self.tappedPreviousPoint = tapLocation;
-            self.tappedPoint = tapLocation;
+			//Saving values to compare with next time
+            self.previousTappedPoint = tapLocation;
             self.oldValue = self.value;
+            
+                        
 			break;
-		
         }
             
 		default:
@@ -428,14 +347,22 @@
 
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [super endTrackingWithTouch:touch withEvent:event];
-}
+    //Set the circular slider at the right place
+    //animate it if it is clunky
+    //self.value = self.adjustedValue;
+    //if rotation is right decrease value
+    //if rotation is left increase value
+    //based on velocity 
+    if (self.angle > 0) 
+    {
+        self.value = ceil(self.value);
+    }
+    else
+    {
+        self.value = floor(self.value);
+    }
+   
 
-//if value reaches less than 5 cancel tracking
-//
--(void) cancelTrackingWithEvent:(UIEvent *)event
-{
-    [super cancelTrackingWithEvent:event];
 }
 
 @end
