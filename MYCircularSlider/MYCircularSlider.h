@@ -23,7 +23,9 @@
 @property(nonatomic) BOOL isFilledModeOn;
 @property(nonatomic) float elapsedTime;
 
-@property(nonatomic) float adjustedValue;
+- (BOOL) isPointInFilledMode:(CGPoint)tapLocation;
+- (BOOL) isPointInCircle:(CGPoint)tapLocation;
+
 @end
 
 #pragma mark - Utility Functions

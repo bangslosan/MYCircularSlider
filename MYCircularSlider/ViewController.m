@@ -14,10 +14,10 @@
 - (IBAction)playOrPause:(id)sender;
 - (IBAction)sliderValueChanged:(MYCircularSlider *)sender;
 - (void) playAfterReset;
-- (IBAction)reset:(id)sender;
+- (void)reset;
 - (void) calculateTotalTime;
-- (IBAction)turnBreakModeOn:(id)sender;
-- (IBAction)turnWorkModeOn:(id)sender;
+- (void)turnBreakModeOn;
+- (void)turnWorkModeOn;
 
 
 
@@ -40,6 +40,7 @@
 @synthesize totalTime = _totalTime;
 
 
+
 - (void) setIsWorkModeOn:(BOOL)isWorkModeOn
 {
     if (_isWorkModeOn != isWorkModeOn) {
@@ -58,17 +59,20 @@
         timeElapsed = self.totalTime;
         
     }
+    if (timeElapsed < 0) {
+        timeElapsed = 0;
+    }
     
+    NSLog(@"time Elapsed:%f", timeElapsed);
     _timeElapsed = timeElapsed;
     self.circularSlider.elapsedTime = timeElapsed;
     
-    NSLog(@"Time Elapsed:%f",_timeElapsed);
-
 }
 
 - (void) setTotalTime:(NSTimeInterval)totalTime
 {
     _totalTime = round(totalTime);
+    NSLog(@"time total:%f", totalTime);
     [self setTimeElapsed:self.timeElapsed];
     [self updateInnerButton];
 }
@@ -124,59 +128,39 @@
 
 - (void) calculateTotalTime
 {
-    if (self.isWorkModeOn) {
+    if (self.isWorkModeOn) 
+    {
         //
         //Get int values of circular slider
         //
         
-        self.totalTime = round(self.circularSlider.value)*60;
+        self.totalTime = self.circularSlider.value*60;
     }
-    else {
-        self.totalTime = round(self.circularSlider.maximumValue-self.circularSlider.value)*60;
-    }
-}
-
-- (IBAction)turnBreakModeOn:(id)sender 
-{
-    //if break mode is already on
-    //do nothing
-    if (!self.isWorkModeOn) 
-    {
-        
-    }
-    //else turn break mode on
-    //and reset
     else 
     {
-        self.isWorkModeOn = NO;
-        [self reset:nil];
-
+        self.totalTime = (self.circularSlider.maximumValue-self.circularSlider.value)*60;
     }
 }
 
-- (IBAction)turnWorkModeOn:(id)sender 
+- (void)turnBreakModeOn
 {
-    //if work mode is already on
-    //do nothing
-    if (self.isWorkModeOn) 
-    {
-        
-    }
-    //else turn work mode on
-    //and reset
-    else 
-    {
-        self.isWorkModeOn = YES;
-        [self reset:nil];
-        
-    }    
+   
+    self.isWorkModeOn = NO;
+    [self reset];
+
 }
 
-- (IBAction)reset:(id)sender
+- (void)turnWorkModeOn
 {
-    if (sender) {
-        self.isWorkModeOn = YES;
-    }
+   
+    self.isWorkModeOn = YES;
+    [self reset];
+    
+}
+
+
+- (void)reset
+{
     self.firstPlay = YES;
     self.timeElapsed = 0;
     self.timeLeft = 0;
@@ -189,7 +173,7 @@
 {
     //Set start and Stop Time when play pressed
     self.startDate = [NSDate date];
-    //self.totalTime = self.circularSlider.value*60;
+
     [self calculateTotalTime];
 }
 
@@ -236,7 +220,7 @@
         
         self.isWorkModeOn = !self.isWorkModeOn;
         
-        [self reset:nil];
+        [self reset];
         self.isPaused = NO;
         [self playOrPause:nil];
         
@@ -263,6 +247,25 @@
     int secondsLeft = timeLeft % 60;
     self.innerButton.titleLabel.text = [NSString stringWithFormat:@"%i:%02i", minutesLeft, secondsLeft];
     //[self.innerButton setNeedsDisplay];
+}
+
+- (IBAction)doubleTap:(UITapGestureRecognizer *)sender 
+{
+    CGPoint tapLocation = [sender locationOfTouch:0 inView:self.circularSlider];
+    NSLog(@"%f,%f", tapLocation.x, tapLocation.y);
+    if ([self.circularSlider isPointInCircle:tapLocation]) 
+    {
+        if([self.circularSlider isPointInFilledMode:tapLocation])
+        {
+            [self turnWorkModeOn];
+        }
+        else 
+        {
+            [self turnBreakModeOn];
+        }
+        
+    }
+    
 }
 
 - (void)fireLocalNotification:(NSTimeInterval)timeLeft

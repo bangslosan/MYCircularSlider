@@ -27,10 +27,14 @@
                   withRadius:(CGFloat)radius
                    inContext:(CGContextRef)context;
 
+
+
+
 @property(nonatomic) float oldValue;
 @property(nonatomic) CGPoint previousTappedPoint;
 
 @property(nonatomic) double angle;
+
 
 @end
 
@@ -42,14 +46,20 @@
 @synthesize oldValue = _oldValue,
             previousTappedPoint = _previousTappedPoint,
             elapsedTime = _elapsedTime,
-            isFilledModeOn = _isFilledModeOn,
-            adjustedValue = _adjustedValue;
+            isFilledModeOn = _isFilledModeOn;
 
 @synthesize angle = _angle;
 
 - (void)setElapsedTime:(float)elapsedTime
 {
     _elapsedTime = elapsedTime;
+    [self setNeedsDisplay];
+}
+
+- (void)setIsFilledModeOn:(BOOL)isFilledModeOn
+{
+    _isFilledModeOn = isFilledModeOn;
+    NSLog(@"Filled mode is %i:",_isFilledModeOn);
     [self setNeedsDisplay];
 }
 //Have a cut off at 55 and 5????
@@ -68,6 +78,7 @@
             value = self.minimumValue;
         }
         _value = value;
+        NSLog(@"VALUE:  %f",_value);
         [self setNeedsDisplay];
         
         //For target action
@@ -297,7 +308,7 @@
     //First time value save
     self.oldValue = self.value;
     self.previousTappedPoint = [touch locationInView:self];
-
+    
     return YES;
 }
 
@@ -306,7 +317,8 @@
     CGPoint tapLocation = [touch locationInView:self];
 	switch (touch.phase) 
     {
-		case UITouchPhaseMoved: 
+        
+        case UITouchPhaseMoved: 
         {
             //Getting the center of the circle
 			CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
@@ -334,10 +346,13 @@
 			//Saving values to compare with next time
             self.previousTappedPoint = tapLocation;
             self.oldValue = self.value;
+                   
             
-                        
+            
+            
 			break;
         }
+         
             
 		default:
 			break;
@@ -345,24 +360,43 @@
     return [super beginTrackingWithTouch:touch withEvent:event];
 }
 
-- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
-{
-    //Set the circular slider at the right place
-    //animate it if it is clunky
-    //self.value = self.adjustedValue;
-    //if rotation is right decrease value
-    //if rotation is left increase value
-    //based on velocity 
-    if (self.angle > 0) 
-    {
-        self.value = ceil(self.value);
-    }
-    else
-    {
-        self.value = floor(self.value);
-    }
-   
 
+- (BOOL) isPointInFilledMode:(CGPoint)tapLocation
+{
+    CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+    CGPoint startPoint = CGPointMake(sliderCenter.x, sliderCenter.y-[self sliderRadius]);
+    CGFloat angle = angleBetweenThreePoints(sliderCenter, tapLocation, startPoint);
+    if (angle < 0) {
+        angle = -angle;
+    }
+    else {
+        angle = 2*M_PI - angle;
+    }
+    float value = translateValueFromSourceIntervalToDestinationInterval(angle, 
+                                                                        0, 2*M_PI, self.minimumValue, self.maximumValue);
+    if (self.maximumValue-value<self.value) 
+    {
+        return YES;
+    }
+    else 
+    {
+        return NO;
+    }
+    
+}
+- (BOOL) isPointInCircle:(CGPoint)tapLocation
+{
+    CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
+    CGPoint v1 = CGPointMake(tapLocation.x - sliderCenter.x, tapLocation.y - sliderCenter.y);
+    float magnitude = sqrtf((v1.x*v1.x)+(v1.y*v1.y));
+    if (magnitude<[self sliderRadius]) 
+    {
+        return YES;
+    }
+    else 
+    {
+        return NO;
+    }
 }
 
 @end

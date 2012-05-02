@@ -28,6 +28,7 @@
 @property BOOL isPaused;
 @property BOOL firstPlay;
 
+- (IBAction)doubleTap:(UITapGestureRecognizer *)sender;
 
 - (void) fireLocalNotification:(NSTimeInterval)timeLeft;
 
