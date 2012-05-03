@@ -16,11 +16,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    //[application setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+    [application setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:UIStatusBarAnimationSlide];
     // Override point for customization after application launch.
     //UIStoryboard *mainStoryboard = [UIStoryboard storyboardWithName:@"MainStoryboard"
      //                                                        bundle: nil];
     //self.controller = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier: @"mainscreen"];
     self.controller = (ViewController *)[self.window rootViewController];
+    
     return YES;
 }
 							

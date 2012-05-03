@@ -9,8 +9,9 @@
 #import "ViewController.h"
 
 @interface ViewController ()
+
 - (void) updateTimer;
-- (void) updateInnerButton;
+- (void) updateTimeLeftLabel;
 - (IBAction)playOrPause:(id)sender;
 - (IBAction)sliderValueChanged:(MYCircularSlider *)sender;
 - (void) playAfterReset;
@@ -19,25 +20,28 @@
 - (void)turnBreakModeOn;
 - (void)turnWorkModeOn;
 
-
-
-@property (strong, nonatomic) IBOutlet UILabel *temporaryLabel;
+@property (readwrite)	CFURLRef		soundFileURLRef;
+@property (readonly)	SystemSoundID	soundFileObject;
 
 @end
 
 @implementation ViewController
-@synthesize temporaryLabel = _temporaryLabel;
-@synthesize circularSlider = _circularSlider;
-@synthesize innerButton = _innerButton;
-@synthesize startDate = _startTime;
-@synthesize stopDate = _stopTime;
-@synthesize timeLeft = _timeLeft;
-@synthesize timeElapsed = _timeElapsed;
-@synthesize timer = _timer;
-@synthesize isWorkModeOn = _isWorkModeOn;
-@synthesize isPaused = _isPaused;
-@synthesize firstPlay = _firstPlay;
-@synthesize totalTime = _totalTime;
+@synthesize 
+circularSlider = _circularSlider,
+innerButton = _innerButton,
+timeLeftLabel = _timeLeftLabel,
+modeLabel = _modeLabel,
+startDate = _startTime,
+stopDate = _stopTime,
+timeLeft = _timeLeft,
+timeElapsed = _timeElapsed,
+timer = _timer,
+isWorkModeOn = _isWorkModeOn,
+isPaused = _isPaused,
+firstPlay = _firstPlay,
+totalTime = _totalTime,
+soundFileObject = _soundFileObject,
+soundFileURLRef = _soundFileURLRef;
 
 
 
@@ -59,7 +63,8 @@
         timeElapsed = self.totalTime;
         
     }
-    if (timeElapsed < 0) {
+    if (timeElapsed < 0) 
+    {
         timeElapsed = 0;
     }
     
@@ -74,7 +79,7 @@
     _totalTime = round(totalTime);
     NSLog(@"time total:%f", totalTime);
     [self setTimeElapsed:self.timeElapsed];
-    [self updateInnerButton];
+    [self updateTimeLeftLabel];
 }
 
 - (void)viewDidLoad
@@ -92,6 +97,15 @@
     self.circularSlider.minimumValue = 0;
     self.circularSlider.value = 40;
     
+
+    NSURL *tapSound   = [[NSBundle mainBundle] URLForResource: @"tap" withExtension: @"aif"];
+    
+    // Store the URL as a CFURLRef instance
+    self.soundFileURLRef = (__bridge_retained CFURLRef)tapSound;
+    
+    // Create a system sound object representing the sound file.
+    AudioServicesCreateSystemSoundID (_soundFileURLRef,&_soundFileObject);
+    
     self.firstPlay = YES;
     self.isWorkModeOn = YES;
     //self.timeElapsed = 0;
@@ -102,7 +116,10 @@
 {
     [self setCircularSlider:nil];
     [self setInnerButton:nil];
-    [self setTemporaryLabel:nil];
+    [self setTimeLeftLabel:nil];
+    [self setModeLabel:nil];
+    AudioServicesDisposeSystemSoundID (_soundFileObject);
+    CFRelease (_soundFileURLRef);
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -146,6 +163,7 @@
 {
    
     self.isWorkModeOn = NO;
+     [self calculateTotalTime];
     [self reset];
 
 }
@@ -154,6 +172,7 @@
 {
    
     self.isWorkModeOn = YES;
+     [self calculateTotalTime];
     [self reset];
     
 }
@@ -164,6 +183,7 @@
     self.firstPlay = YES;
     self.timeElapsed = 0;
     self.timeLeft = 0;
+    [self calculateTotalTime];
     //Pause
     self.isPaused = NO;
     [self playOrPause:nil];
@@ -180,13 +200,24 @@
 
 - (IBAction)playOrPause:(id)sender 
 {
+    if (sender) {
+        AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
+        AudioServicesPlaySystemSound(_soundFileObject);
+    }
     //Change work mode
     self.isPaused = !self.isPaused;
     
+    CATransition *animation = [CATransition animation];
+    animation.duration = 0.3;
+    animation.type = kCATransitionFade;
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    [self.modeLabel.layer addAnimation:animation forKey:@"changeTextTransition"];
+    
+    
     if (self.isPaused) 
     {
-        [self updateInnerButton];
-        self.innerButton.titleLabel.text = @"0:00";
+        [self updateTimeLeftLabel];
+        self.modeLabel.text = @"PAUSED";
         //stop the timer
         [self.timer invalidate];
         self.timer = nil;
@@ -200,7 +231,14 @@
             self.firstPlay = NO;
         }
         self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimer) userInfo:nil repeats:YES];
-        
+        if (self.isWorkModeOn) 
+        {
+            self.modeLabel.text = @"WORK";
+        }
+        else 
+        {
+            self.modeLabel.text = @"REST";
+        }
     }
     
   
@@ -227,14 +265,14 @@
     }
     else 
     {
-         [self updateInnerButton];
+         [self updateTimeLeftLabel];
     }
    
     
     
 }
 
-- (void)updateInnerButton
+- (void)updateTimeLeftLabel
 {
     //Changing the algorithm to see if the 60 sec bug goes away
     /*
@@ -243,10 +281,9 @@
      */
     self.timeLeft = self.totalTime - self.timeElapsed;
     int timeLeft = (int)self.timeLeft;
-    int minutesLeft = (timeLeft/60) % 60;
+    int minutesLeft = (timeLeft/60);
     int secondsLeft = timeLeft % 60;
-    self.innerButton.titleLabel.text = [NSString stringWithFormat:@"%i:%02i", minutesLeft, secondsLeft];
-    //[self.innerButton setNeedsDisplay];
+    self.timeLeftLabel.text = [NSString stringWithFormat:@"%i:%02i", minutesLeft, secondsLeft];
 }
 
 - (IBAction)doubleTap:(UITapGestureRecognizer *)sender 

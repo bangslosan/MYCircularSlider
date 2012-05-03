@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1EA746E7155280C100128FF0 /* Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746DD155280C100128FF0 /* Background.png */; };
+		1EA746E8155280C100128FF0 /* Background@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746DE155280C100128FF0 /* Background@2x.png */; };
+		1EA746E9155280C100128FF0 /* Button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746DF155280C100128FF0 /* Button.png */; };
+		1EA746EA155280C100128FF0 /* Button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E0155280C100128FF0 /* Button@2x.png */; };
+		1EA746EB155280C100128FF0 /* DarkerButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E1155280C100128FF0 /* DarkerButton.png */; };
+		1EA746EC155280C100128FF0 /* DarkerButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E2155280C100128FF0 /* DarkerButton@2x.png */; };
+		1EA746ED155280C100128FF0 /* LeftButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E3155280C100128FF0 /* LeftButton.png */; };
+		1EA746EE155280C100128FF0 /* LeftButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E4155280C100128FF0 /* LeftButton@2x.png */; };
+		1EA746EF155280C100128FF0 /* RightButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E5155280C100128FF0 /* RightButton.png */; };
+		1EA746F0155280C100128FF0 /* RightButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1EA746E6155280C100128FF0 /* RightButton@2x.png */; };
+		1EA746F215529E5D00128FF0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EA746F115529E5D00128FF0 /* AudioToolbox.framework */; };
 		1EBC34E5154793DD0003EAC3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EBC34E4154793DD0003EAC3 /* UIKit.framework */; };
 		1EBC34E7154793DD0003EAC3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EBC34E6154793DD0003EAC3 /* Foundation.framework */; };
 		1EBC34E9154793DD0003EAC3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1EBC34E8154793DD0003EAC3 /* CoreGraphics.framework */; };
@@ -21,6 +32,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1EA746DD155280C100128FF0 /* Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Background.png; sourceTree = "<group>"; };
+		1EA746DE155280C100128FF0 /* Background@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Background@2x.png"; sourceTree = "<group>"; };
+		1EA746DF155280C100128FF0 /* Button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Button.png; sourceTree = "<group>"; };
+		1EA746E0155280C100128FF0 /* Button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Button@2x.png"; sourceTree = "<group>"; };
+		1EA746E1155280C100128FF0 /* DarkerButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = DarkerButton.png; sourceTree = "<group>"; };
+		1EA746E2155280C100128FF0 /* DarkerButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "DarkerButton@2x.png"; sourceTree = "<group>"; };
+		1EA746E3155280C100128FF0 /* LeftButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LeftButton.png; sourceTree = "<group>"; };
+		1EA746E4155280C100128FF0 /* LeftButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LeftButton@2x.png"; sourceTree = "<group>"; };
+		1EA746E5155280C100128FF0 /* RightButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RightButton.png; sourceTree = "<group>"; };
+		1EA746E6155280C100128FF0 /* RightButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "RightButton@2x.png"; sourceTree = "<group>"; };
+		1EA746F115529E5D00128FF0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		1EA746F71552A22A00128FF0 /* tap.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tap.aif; sourceTree = "<group>"; };
 		1EBC34E0154793DD0003EAC3 /* MYCircularSlider.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MYCircularSlider.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EBC34E4154793DD0003EAC3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		1EBC34E6154793DD0003EAC3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -45,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EA746F215529E5D00128FF0 /* AudioToolbox.framework in Frameworks */,
 				1EBC350A154900EC0003EAC3 /* QuartzCore.framework in Frameworks */,
 				1EBC34E5154793DD0003EAC3 /* UIKit.framework in Frameworks */,
 				1EBC34E7154793DD0003EAC3 /* Foundation.framework in Frameworks */,
@@ -75,6 +99,7 @@
 		1EBC34E3154793DD0003EAC3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1EA746F115529E5D00128FF0 /* AudioToolbox.framework */,
 				1EBC3509154900EC0003EAC3 /* QuartzCore.framework */,
 				1EBC34E4154793DD0003EAC3 /* UIKit.framework */,
 				1EBC34E6154793DD0003EAC3 /* Foundation.framework */,
@@ -94,7 +119,6 @@
 				1EBC34EB154793DD0003EAC3 /* Supporting Files */,
 				1EBC3501154794980003EAC3 /* MYCircularSlider.h */,
 				1EBC3502154794980003EAC3 /* MYCircularSlider.m */,
-				1EBC350F154BB45F0003EAC3 /* sms-received.wav */,
 			);
 			path = MYCircularSlider;
 			sourceTree = "<group>";
@@ -102,6 +126,18 @@
 		1EBC34EB154793DD0003EAC3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				1EA746F71552A22A00128FF0 /* tap.aif */,
+				1EBC350F154BB45F0003EAC3 /* sms-received.wav */,
+				1EA746DD155280C100128FF0 /* Background.png */,
+				1EA746DE155280C100128FF0 /* Background@2x.png */,
+				1EA746DF155280C100128FF0 /* Button.png */,
+				1EA746E0155280C100128FF0 /* Button@2x.png */,
+				1EA746E1155280C100128FF0 /* DarkerButton.png */,
+				1EA746E2155280C100128FF0 /* DarkerButton@2x.png */,
+				1EA746E3155280C100128FF0 /* LeftButton.png */,
+				1EA746E4155280C100128FF0 /* LeftButton@2x.png */,
+				1EA746E5155280C100128FF0 /* RightButton.png */,
+				1EA746E6155280C100128FF0 /* RightButton@2x.png */,
 				1EBC34EC154793DD0003EAC3 /* MYCircularSlider-Info.plist */,
 				1EBC34ED154793DD0003EAC3 /* InfoPlist.strings */,
 				1EBC34F0154793DD0003EAC3 /* main.m */,
@@ -163,6 +199,16 @@
 				1EBC34EF154793DD0003EAC3 /* InfoPlist.strings in Resources */,
 				1EBC34F8154793DE0003EAC3 /* MainStoryboard.storyboard in Resources */,
 				1EBC3510154BB45F0003EAC3 /* sms-received.wav in Resources */,
+				1EA746E7155280C100128FF0 /* Background.png in Resources */,
+				1EA746E8155280C100128FF0 /* Background@2x.png in Resources */,
+				1EA746E9155280C100128FF0 /* Button.png in Resources */,
+				1EA746EA155280C100128FF0 /* Button@2x.png in Resources */,
+				1EA746EB155280C100128FF0 /* DarkerButton.png in Resources */,
+				1EA746EC155280C100128FF0 /* DarkerButton@2x.png in Resources */,
+				1EA746ED155280C100128FF0 /* LeftButton.png in Resources */,
+				1EA746EE155280C100128FF0 /* LeftButton@2x.png in Resources */,
+				1EA746EF155280C100128FF0 /* RightButton.png in Resources */,
+				1EA746F0155280C100128FF0 /* RightButton@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +338,7 @@
 				1EBC3500154793DE0003EAC3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -163,8 +163,11 @@
 	self.value = 45.0;
 	self.minimumValue = 0.0;
 	self.maximumValue = 60.0;
-	self.filledColor = [UIColor colorWithRed:129/255.0 green:195/255.0 blue:29/255.0 alpha:1];
-	self.unfilledColor = [UIColor colorWithRed:62/255.0 green:173/255.0 blue:219/255.0 alpha:1];
+	//self.filledColor = [UIColor colorWithRed:129/255.0 green:195/255.0 blue:29/255.0 alpha:1];
+	//self.unfilledColor = [UIColor colorWithRed:62/255.0 green:173/255.0 blue:219/255.0 alpha:1];
+    self.unfilledColor = [UIColor colorWithRed:197/255.0 green:47/255.0 blue:59/255.0 alpha:1];
+	self.filledColor = [UIColor colorWithRed:26/255.0 green:131/255.0 blue:186/255.0 alpha:1];
+    
     
     self.isFilledModeOn = YES;
     self.elapsedTime = 0.0;
@@ -201,6 +204,12 @@
     
     //draw elapsed time
     CGContextSetLineWidth(context, kLineWidth);
+    [[UIColor colorWithRed:51/255.0 green:51/255.0 blue:51/255.0 alpha:1] setStroke];
+    [self drawCircularTrack:self.elapsedTime 
+                    atPoint:middlePoint 
+                 withRadius:radius+(kExtraSpaceRadius/2)
+                  inContext:context];
+    /*
     if (self.isFilledModeOn) 
     {
         [self.filledColor setStroke];
@@ -217,6 +226,7 @@
                      withRadius:radius+(kExtraSpaceRadius/2)
                       inContext:context];
     }
+     */
     
 }
 
@@ -384,12 +394,14 @@
     }
     
 }
+
+#define innerButtonRadius 50
 - (BOOL) isPointInCircle:(CGPoint)tapLocation
 {
     CGPoint sliderCenter = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
     CGPoint v1 = CGPointMake(tapLocation.x - sliderCenter.x, tapLocation.y - sliderCenter.y);
     float magnitude = sqrtf((v1.x*v1.x)+(v1.y*v1.y));
-    if (magnitude<[self sliderRadius]) 
+    if (magnitude<[self sliderRadius] && magnitude>innerButtonRadius) 
     {
         return YES;
     }

@@ -8,12 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
+#import <AudioToolbox/AudioToolbox.h>
 #import "MYCircularSlider.h"
 
 @interface ViewController : UIViewController
 
 @property (weak, nonatomic)IBOutlet MYCircularSlider *circularSlider;
 @property (strong, nonatomic)IBOutlet UIButton *innerButton;
+@property (strong, nonatomic) IBOutlet UILabel *timeLeftLabel;
+@property (strong, nonatomic) IBOutlet UILabel *modeLabel;
 
 @property NSDate *startDate;
 @property NSDate *stopDate;
