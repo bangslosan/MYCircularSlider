@@ -23,7 +23,8 @@
      //                                                        bundle: nil];
     //self.controller = (ViewController *)[mainStoryboard instantiateViewControllerWithIdentifier: @"mainscreen"];
     self.controller = (ViewController *)[self.window rootViewController];
-    
+    //UITabBarController *tabBar = (UITabBarController *)[self.window rootViewController];
+    //self.controller = [[tabBar viewControllers] objectAtIndex:1];
     return YES;
 }
 							

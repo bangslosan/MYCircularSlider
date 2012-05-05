@@ -19,6 +19,7 @@
 - (void) calculateTotalTime;
 - (void)turnBreakModeOn;
 - (void)turnWorkModeOn;
+@property (strong, nonatomic) IBOutlet UIImageView *playOrPauseImage;
 
 @property (readwrite)	CFURLRef		soundFileURLRef;
 @property (readonly)	SystemSoundID	soundFileObject;
@@ -27,6 +28,7 @@
 
 @implementation ViewController
 @synthesize 
+playOrPauseImage = _playOrPauseImage, 
 circularSlider = _circularSlider,
 innerButton = _innerButton,
 timeLeftLabel = _timeLeftLabel,
@@ -98,7 +100,7 @@ soundFileURLRef = _soundFileURLRef;
     self.circularSlider.value = 40;
     
 
-    NSURL *tapSound   = [[NSBundle mainBundle] URLForResource: @"tap" withExtension: @"aif"];
+    NSURL *tapSound   = [[NSBundle mainBundle] URLForResource: @"click" withExtension: @"wav"];
     
     // Store the URL as a CFURLRef instance
     self.soundFileURLRef = (__bridge_retained CFURLRef)tapSound;
@@ -120,6 +122,7 @@ soundFileURLRef = _soundFileURLRef;
     [self setModeLabel:nil];
     AudioServicesDisposeSystemSoundID (_soundFileObject);
     CFRelease (_soundFileURLRef);
+    [self setPlayOrPauseImage:nil];
     [super viewDidUnload];
     // Release any retained subviews of the main view.
 }
@@ -202,28 +205,30 @@ soundFileURLRef = _soundFileURLRef;
 {
     if (sender) {
         AudioServicesPlaySystemSound (kSystemSoundID_Vibrate);
-        AudioServicesPlaySystemSound(_soundFileObject);
+        //AudioServicesPlaySystemSound(_soundFileObject);
     }
     //Change work mode
     self.isPaused = !self.isPaused;
     
     CATransition *animation = [CATransition animation];
-    animation.duration = 0.3;
+    animation.duration = 0.35;
     animation.type = kCATransitionFade;
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     [self.modeLabel.layer addAnimation:animation forKey:@"changeTextTransition"];
-    
+    //[self.playOrPauseImage.layer addAnimation:animation forKey:@"kCATransition"];
     
     if (self.isPaused) 
     {
         [self updateTimeLeftLabel];
-        self.modeLabel.text = @"PAUSED";
+        //self.modeLabel.text = @"PAUSED";
+        //self.playOrPauseImage.image = [UIImage imageNamed:@"pause.png"];
         //stop the timer
         [self.timer invalidate];
         self.timer = nil;
     }
     else 
     {
+        self.playOrPauseImage.image = nil;
         //if first play, set start time 
         if (self.firstPlay) 
         {
@@ -231,14 +236,15 @@ soundFileURLRef = _soundFileURLRef;
             self.firstPlay = NO;
         }
         self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateTimer) userInfo:nil repeats:YES];
-        if (self.isWorkModeOn) 
-        {
-            self.modeLabel.text = @"WORK";
-        }
-        else 
-        {
-            self.modeLabel.text = @"REST";
-        }
+        
+    }
+    if (self.isWorkModeOn) 
+    {
+        self.modeLabel.text = @"WORK";
+    }
+    else 
+    {
+        self.modeLabel.text = @"REST";
     }
     
   
@@ -335,6 +341,19 @@ soundFileURLRef = _soundFileURLRef;
         NSLog(@"%@",self.stopDate);
     }
 }
-
+#pragma mark - Segue
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"ShowStats"]) 
+    {
+        StatisticsViewController *controller = [segue destinationViewController];
+        controller.delegate = self;
+    }
+}
+#pragma mark-Delegate methods
+- (void)statisticsViewControllerDidPressDone:(StatisticsViewController *)controller
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
 
 @end

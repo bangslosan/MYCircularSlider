@@ -370,6 +370,12 @@
     return [super beginTrackingWithTouch:touch withEvent:event];
 }
 
+/*
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    [UIView transitionFromView:self toView:self duration:2 options:UIViewAnim completion:nil];
+}
+ */
 
 - (BOOL) isPointInFilledMode:(CGPoint)tapLocation
 {
