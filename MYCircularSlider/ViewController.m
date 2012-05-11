@@ -27,6 +27,9 @@
 @end
 
 @implementation ViewController
+{
+    
+}
 @synthesize 
 playOrPauseImage = _playOrPauseImage, 
 circularSlider = _circularSlider,
