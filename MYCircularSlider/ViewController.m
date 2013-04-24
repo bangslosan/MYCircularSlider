@@ -27,9 +27,6 @@
 @end
 
 @implementation ViewController
-{
-    
-}
 @synthesize 
 playOrPauseImage = _playOrPauseImage, 
 circularSlider = _circularSlider,
@@ -344,19 +341,6 @@ soundFileURLRef = _soundFileURLRef;
         NSLog(@"%@",self.stopDate);
     }
 }
-#pragma mark - Segue
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    if ([segue.identifier isEqualToString:@"ShowStats"]) 
-    {
-        StatisticsViewController *controller = [segue destinationViewController];
-        controller.delegate = self;
-    }
-}
-#pragma mark-Delegate methods
-- (void)statisticsViewControllerDidPressDone:(StatisticsViewController *)controller
-{
-    [self dismissModalViewControllerAnimated:YES];
-}
+
 
 @end

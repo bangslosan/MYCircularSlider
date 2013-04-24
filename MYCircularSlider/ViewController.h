@@ -10,9 +10,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import <AudioToolbox/AudioToolbox.h>
 #import "MYCircularSlider.h"
-#import "StatisticsViewController.h"
 
-@interface ViewController : UIViewController <StatisticsViewControllerDelegate>
+@interface ViewController : UIViewController
 
 @property (weak, nonatomic)IBOutlet MYCircularSlider *circularSlider;
 @property (strong, nonatomic)IBOutlet UIButton *innerButton;
